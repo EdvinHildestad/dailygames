@@ -1,0 +1,99 @@
+@page
+@model ProfilesModel
+@{
+    ViewData["Title"] = "Manage Profiles";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">👤 Manage Profiles</h1>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <!-- Create New Profile -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">Create New Profile</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" asp-page-handler="Create">
+                                <div class="mb-3">
+                                    <label asp-for="NewProfileName" class="form-label">Profile Name</label>
+                                    <input asp-for="NewProfileName" class="form-control" required />
+                                    <span asp-validation-for="NewProfileName" class="text-danger"></span>
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="NewProfileAvatar" class="form-label">Avatar (Emoji or URL)</label>
+                                    <input asp-for="NewProfileAvatar" class="form-control" placeholder="🎮 or image URL" />
+                                    <div class="form-text">Optional: Enter an emoji or image URL</div>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Create Profile</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <!-- Existing Profiles -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Existing Profiles (@Model.Profiles.Count)</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.Profiles.Any())
+                            {
+                                <div class="list-group">
+                                    @foreach (var profile in Model.Profiles)
+                                    {
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center">
+                                                @if (!string.IsNullOrEmpty(profile.Avatar))
+                                                {
+                                                    @if (profile.Avatar.StartsWith("http"))
+                                                    {
+                                                        <img src="@profile.Avatar" alt="Avatar" class="rounded-circle me-2" style="width: 32px; height: 32px; object-fit: cover;" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="me-2" style="font-size: 1.5em;">@profile.Avatar</span>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="me-2" style="font-size: 1.5em;">👤</span>
+                                                }
+                                                <div>
+                                                    <strong>@profile.Name</strong>
+                                                    <br>
+                                                    <small class="text-muted">Created: @profile.CreatedDate.ToString("MMM dd, yyyy")</small>
+                                                </div>
+                                            </div>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="/?profileId=@profile.Id" class="btn btn-outline-primary">Select</a>
+                                                <form method="post" asp-page-handler="Delete" asp-route-id="@profile.Id" class="d-inline" 
+                                                      onsubmit="return confirm('Are you sure you want to delete this profile? This will also delete all scores.')">
+                                                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted text-center mb-0">No profiles created yet.</p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <a href="/" class="btn btn-secondary">🏠 Back to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

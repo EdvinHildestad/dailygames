@@ -1,0 +1,151 @@
+@page
+@model LeaderboardModel
+@{
+    ViewData["Title"] = "Leaderboard";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">🏆 Leaderboard</h1>
+            
+            @if (!Model.Profiles.Any())
+            {
+                <div class="alert alert-info text-center">
+                    <h4>No profiles found!</h4>
+                    <p>Create some profiles and start playing games to see the leaderboard.</p>
+                    <a href="/Profiles" class="btn btn-primary">Create Profile</a>
+                </div>
+            }
+            else
+            {
+                <div class="row">
+                    @foreach (var game in Model.Games)
+                    {
+                        var leaderboard = Model.GameLeaderboards.GetValueOrDefault(game.GameType, new List<GameScore>());
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-header" style="background-color: @game.Color; color: white;">
+                                    <h5 class="mb-0">@game.Icon @game.Name</h5>
+                                </div>
+                                <div class="card-body">
+                                    @if (leaderboard.Any())
+                                    {
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Rank</th>
+                                                        <th>Player</th>
+                                                        <th>Tries</th>
+                                                        <th>Date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @for (int i = 0; i < leaderboard.Count && i < 10; i++)
+                                                    {
+                                                        var score = leaderboard[i];
+                                                        var profile = Model.ProfileLookup.GetValueOrDefault(score.ProfileId);
+                                                        var rankClass = i switch
+                                                        {
+                                                            0 => "table-warning", // Gold
+                                                            1 => "table-secondary", // Silver
+                                                            2 => "table-dark", // Bronze
+                                                            _ => ""
+                                                        };
+                                                        var rankIcon = i switch
+                                                        {
+                                                            0 => "🥇",
+                                                            1 => "🥈",
+                                                            2 => "🥉",
+                                                            _ => $"{i + 1}."
+                                                        };
+                                                        
+                                                        <tr class="@rankClass">
+                                                            <td>
+                                                                <strong>@rankIcon</strong>
+                                                            </td>
+                                                            <td>
+                                                                @if (profile != null)
+                                                                {
+                                                                    <span>
+                                                                        @if (!string.IsNullOrEmpty(profile.Avatar) && !profile.Avatar.StartsWith("http"))
+                                                                        {
+                                                                            @profile.Avatar
+                                                                        }
+                                                                        @profile.Name
+                                                                    </span>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="text-muted">Unknown</span>
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                <span class="badge bg-success">@score.Tries</span>
+                                                            </td>
+                                                            <td>
+                                                                <small class="text-muted">@score.GameDate.ToString("MMM dd")</small>
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        
+                                        @if (leaderboard.Count > 10)
+                                        {
+                                            <small class="text-muted">And @(leaderboard.Count - 10) more players...</small>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p class="text-muted text-center mb-0">No scores recorded yet.</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                
+                <!-- Overall Stats -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">📈 Overall Statistics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-3">
+                                        <h3 class="text-primary">@Model.Profiles.Count</h3>
+                                        <p class="mb-0">Active Players</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h3 class="text-success">@Model.Games.Count</h3>
+                                        <p class="mb-0">Games Available</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h3 class="text-info">@Model.GameLeaderboards.Values.SelectMany(x => x).Count()</h3>
+                                        <p class="mb-0">Total Scores</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <h3 class="text-warning">@Model.GameLeaderboards.Values.SelectMany(x => x).Count(s => s.IsCompleted)</h3>
+                                        <p class="mb-0">Games Won</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <a href="/" class="btn btn-primary">🏠 Back to Dashboard</a>
+                    <a href="/Profiles" class="btn btn-secondary">👤 Manage Profiles</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
