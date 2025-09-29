@@ -93,7 +93,7 @@ public class InMemoryGameService : IGameService
                 GameType = GameType.Wordle_Norwegian,
                 Name = "Wørdle",
                 Description = "Norwegian version of Wordle",
-                Url = "https://wordle.no/",
+                Url = "https://xn--wrdle-vua.dk/",
                 Icon = "🇳🇴",
                 Color = "#D92A3E"
             },
@@ -120,7 +120,7 @@ public class InMemoryGameService : IGameService
                 GameType = GameType.Bandle,
                 Name = "Bandle",
                 Description = "Guess the song from audio clues",
-                Url = "https://bandle.app/",
+                Url = "https://bandle.app/daily",
                 Icon = "🎵",
                 Color = "#1DB954"
             }
