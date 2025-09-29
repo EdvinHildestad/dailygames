@@ -92,9 +92,9 @@ public class InMemoryGameService : IGameService
             {
                 GameType = GameType.Wordle_Norwegian,
                 Name = "Wørdle",
-                Description = "Norwegian version of Wordle",
+                Description = "Danish version of Wordle",
                 Url = "https://xn--wrdle-vua.dk/",
-                Icon = "🇳🇴",
+                Icon = "🇩🇰",
                 Color = "#D92A3E"
             },
             new GameInfo
